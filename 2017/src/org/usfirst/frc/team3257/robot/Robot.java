@@ -3,14 +3,19 @@ package org.usfirst.frc.team3257.robot;
 
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.text.DecimalFormat;
 
 import org.usfirst.frc.team3257.robot.commands.ExampleCommand;
@@ -33,15 +38,15 @@ public class Robot extends IterativeRobot {
     Joystick stick, xbox;
     Jaguar FR, FL, BR, BL, ML, MR;
     DigitalInput limitSwitch;
+    Ultrasonic dist;
     boolean done;
     boolean canMoveForward;
-    
 
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */
-    @SuppressWarnings("deprecation")
+   
 	public void robotInit() {
 		oi = new OI();
 		canMoveForward = true;
@@ -56,12 +61,15 @@ public class Robot extends IterativeRobot {
         FL = new Jaguar(5);
         limitSwitch = new DigitalInput(1);
         CameraServer server = CameraServer.getInstance();
-        //(CameraServer.kSize640x480);;
         server.startAutomaticCapture();;
-
+        
+        dist = new Ultrasonic(3,4);
+//        test = new I2C(I2C.Port.kOnboard, 0x1E);
+//        dataBuffer = new byte[6];
+//        compBuffer = ByteBuffer.wrap(dataBuffer);
     }
     
-	/**
+	/**	
      * This function is called once each time the robot enters Disabled mode.
      * You can use it to reset any subsystem information you want to clear when
 	 * the robot is disabled.
@@ -82,25 +90,45 @@ public class Robot extends IterativeRobot {
     }
 
     public void teleopInit() {
+    	dist.setAutomaticMode(true); // turns on automatic mode
     }
     public void teleopPeriodic() {
     	normalDrive();
+    	rangeFinder();
+//        test.write(0x03, 1); //select mode register
+//        
+//        test.read(0x03, 6, compBuffer);
+//    	compBuffer.order(ByteOrder.BIG_ENDIAN);
+//    	int output = compBuffer.getInt();
+//    	
+//    	System.out.println(String.valueOf(output));
+//        
+    }
+    
+    public void rangeFinder() {
+    	double range = (dist.getRangeInches())/12; // reads the range on the ultrasonic sensor
+    	Timer.delay(.5);
+		DecimalFormat myFormat = new DecimalFormat("0.0");
+		String rangeFinal = myFormat.format(range);
+    	SmartDashboard.putString("Distance (ft): ", rangeFinal);
+		//System.out.println(rangeFinal);
+    	
     }
     
 	public void normalDrive() {
 		
 		if(limitSwitch.get()){
-			System.out.println("The limit switch is pressed?");
+			//System.out.println("The limit switch is pressed?");
 			done = true;
 				FL.set(0); // multiply value by .5 to make 50% speed
-				BL.set(0);
+				BL.set(0);	
 				FR.set(0);
 				BR.set(0);
 				ML.set(0);
 				MR.set(0);
 		}
-		if(!done){
-			System.out.println("The limit switch was released");
+		else {
+			//System.out.println("The limit switch was released");
 			double axisXinitial = xbox.getRawAxis(4); //axis 4 is right joystick x axis
 			DecimalFormat myFormat = new DecimalFormat("0.0");
 			double axisX = Double.parseDouble(myFormat.format(axisXinitial));
