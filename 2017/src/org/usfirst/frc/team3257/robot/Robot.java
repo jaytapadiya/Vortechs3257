@@ -2,6 +2,7 @@
 package org.usfirst.frc.team3257.robot;
 
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.Joystick;
@@ -31,6 +32,9 @@ public class Robot extends IterativeRobot {
 
     Joystick stick, xbox;
     Jaguar FR, FL, BR, BL, ML, MR;
+    DigitalInput limitSwitch;
+    boolean done;
+    boolean canMoveForward;
     
 
     /**
@@ -40,6 +44,8 @@ public class Robot extends IterativeRobot {
     @SuppressWarnings("deprecation")
 	public void robotInit() {
 		oi = new OI();
+		canMoveForward = true;
+		done = false;
         xbox = new Joystick(0);
         stick = new Joystick(1);
         FR = new Jaguar(0);
@@ -48,6 +54,7 @@ public class Robot extends IterativeRobot {
         BL = new Jaguar(3);
         ML = new Jaguar(4);
         FL = new Jaguar(5);
+        limitSwitch = new DigitalInput(1);
         CameraServer server = CameraServer.getInstance();
         //(CameraServer.kSize640x480);;
         server.startAutomaticCapture();;
@@ -77,51 +84,64 @@ public class Robot extends IterativeRobot {
     public void teleopInit() {
     }
     public void teleopPeriodic() {
-    normalDrive();
+    	normalDrive();
     }
     
 	public void normalDrive() {
-		double axisXinitial = xbox.getRawAxis(4); //axis 4 is right joystick x axis
-		DecimalFormat myFormat = new DecimalFormat("0.0");
-		double axisX = Double.parseDouble(myFormat.format(axisXinitial));
-		double leftStickYinitial = xbox.getY();
-		double leftStickY = Double.parseDouble(myFormat.format(leftStickYinitial));
-		double fl;
-		double bl;
-		double fr;
-		double br;
 		
-		double actualY = Math.pow(leftStickY, 7.0); //cubic function; makes sensitivity at lower magnitude less significant and exponentially increases
-		double actualX = 1 - (Math.abs(axisX))*.5; //this value will be set to the side of motors to which the robot is turning; the inner wheels can turn a maximum of half the speed of the outer wheels
-
-		
-		if ((Math.abs(axisX) < .2) && (Math.abs(actualY) > .2)) { //0.2 is used throughout to account for the inaccuracy of the joystick
-			fl = actualY;
-			bl = actualY;
-			fr = -actualY;
-			br = -actualY;
-		} else if (axisX > 0.2 && (Math.abs(actualY) > 0.2)) {
-			fl = actualY;
-			bl = actualY;
-			fr = -(actualY * actualX);
-			br = -(actualY * actualX);
-		} else if (axisX < -0.2 && (Math.abs(actualY) > 0.2)) {
-			fl = (actualY * actualX);
-			bl = (actualY * actualX);
-			fr = -actualY;
-			br = -actualY;
-		} else if ((Math.abs(actualY) < 0.2) && (Math.abs(axisX) > 0.2)) {
-			fl = -(axisX);
-			bl = -(axisX);
-			fr = -(axisX);
-			br = -(axisX);
-		} else	{
-			fl = 0;
-			fr = 0;
-			bl = 0;
-			br = 0;
+		if(limitSwitch.get()){
+			System.out.println("The limit switch is pressed?");
+			done = true;
+				FL.set(0); // multiply value by .5 to make 50% speed
+				BL.set(0);
+				FR.set(0);
+				BR.set(0);
+				ML.set(0);
+				MR.set(0);
 		}
-				
+		if(!done){
+			System.out.println("The limit switch was released");
+			double axisXinitial = xbox.getRawAxis(4); //axis 4 is right joystick x axis
+			DecimalFormat myFormat = new DecimalFormat("0.0");
+			double axisX = Double.parseDouble(myFormat.format(axisXinitial));
+			double leftStickYinitial = xbox.getY();
+			double leftStickY = Double.parseDouble(myFormat.format(leftStickYinitial));
+			double fl;
+			double bl;
+			double fr;
+			double br;
+			
+			double actualY = Math.pow(leftStickY, 7.0); //cubic function; makes sensitivity at lower magnitude less significant and exponentially increases
+			double actualX = 1 - (Math.abs(axisX))*.5; //this value will be set to the side of motors to which the robot is turning; the inner wheels can turn a maximum of half the speed of the outer wheels
+	
+			
+			if ((Math.abs(axisX) < .2) && (Math.abs(actualY) > .2)) { //0.2 is used throughout to account for the inaccuracy of the joystick
+				fl = actualY;
+				bl = actualY;
+				fr = -actualY;
+				br = -actualY;
+			} else if (axisX > 0.2 && (Math.abs(actualY) > 0.2)) {
+				fl = actualY;
+				bl = actualY;
+				fr = -(actualY * actualX);
+				br = -(actualY * actualX);
+			} else if (axisX < -0.2 && (Math.abs(actualY) > 0.2)) {
+				fl = (actualY * actualX);
+				bl = (actualY * actualX);
+				fr = -actualY;
+				br = -actualY;
+			} else if ((Math.abs(actualY) < 0.2) && (Math.abs(axisX) > 0.2)) {
+				fl = -(axisX);
+				bl = -(axisX);
+				fr = -(axisX);
+				br = -(axisX);
+			} else	{
+				fl = 0;
+				fr = 0;
+				bl = 0;
+				br = 0;
+			}
+
 			FL.set(-fl * .5); // multiply value by .5 to make 50% speed
 			BL.set(-bl * .5);
 			FR.set(-fr * .5);
@@ -129,6 +149,8 @@ public class Robot extends IterativeRobot {
 			ML.set(-fl * .5);
 			MR.set(-br * .5);
 		}
+	}
+
     
     /**
      * This function is called periodically during test mode
