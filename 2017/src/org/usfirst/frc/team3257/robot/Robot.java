@@ -36,11 +36,13 @@ public class Robot extends IterativeRobot {
 	public static OI oi;
 
     Joystick stick, xbox;
-    Jaguar FR, FL, BR, BL, ML, MR;
+    
+	Talon FR, FL, BR, BL, ML, MR;
     DigitalInput limitSwitch;
-    Ultrasonic dist;
+    Ultrasonic distL, distR;
     boolean done;
     boolean canMoveForward;
+    double speedMult;
 
     /**
      * This function is run when the robot is first started up and should be
@@ -53,20 +55,19 @@ public class Robot extends IterativeRobot {
 		done = false;
         xbox = new Joystick(0);
         stick = new Joystick(1);
-        FR = new Jaguar(0);
-        MR = new Jaguar(1);
-        BR = new Jaguar(2);
-        BL = new Jaguar(3);
-        ML = new Jaguar(4);
-        FL = new Jaguar(5);
+        FR = new Talon(0);
+        MR = new Talon(1);
+        BR = new Talon(2);
+        BL = new Talon(3);
+        ML = new Talon(4);
+        FL = new Talon(5);
         limitSwitch = new DigitalInput(1);
         CameraServer server = CameraServer.getInstance();
-        server.startAutomaticCapture();;
+        server.startAutomaticCapture();
         
-        dist = new Ultrasonic(3,4);
-//        test = new I2C(I2C.Port.kOnboard, 0x1E);
-//        dataBuffer = new byte[6];
-//        compBuffer = ByteBuffer.wrap(dataBuffer);
+        speedMult = .5;
+        distL = new Ultrasonic(5,6);
+        distR = new Ultrasonic(3,2); //output, input DIO ports
     }
     
 	/**	
@@ -75,7 +76,7 @@ public class Robot extends IterativeRobot {
 	 * the robot is disabled.
      */
     public void disabledInit(){
-
+    	
     }
 	
 	public void disabledPeriodic() {
@@ -90,44 +91,69 @@ public class Robot extends IterativeRobot {
     }
 
     public void teleopInit() {
-    	dist.setAutomaticMode(true); // turns on automatic mode
+    	distL.setAutomaticMode(true); // turns on automatic mode
+    	distR.setAutomaticMode(true);
     }
     public void teleopPeriodic() {
+    	LiveWindow.run();
     	normalDrive();
     	rangeFinder();
-//        test.write(0x03, 1); //select mode register
-//        
-//        test.read(0x03, 6, compBuffer);
-//    	compBuffer.order(ByteOrder.BIG_ENDIAN);
-//    	int output = compBuffer.getInt();
-//    	
-//    	System.out.println(String.valueOf(output));
-//        
+    	if(stick.getRawButton(2) == true){
+    		align();
+    	}
+    }
+    
+    public void align(){
+    	while(distL.getRangeInches() + .5 < distR.getRangeInches()){
+    		FR.set(0.3);
+    		MR.set(0.3);
+    		BR.set(0.3);
+    	}
+    	while(distR.getRangeInches() + .5 < distL.getRangeInches()){
+    		FL.set(-0.3);
+    		ML.set(-0.3);
+    		BL.set(-0.3);
+    	}
+		FL.set(0); 
+		BL.set(0);	
+		FR.set(0);
+		BR.set(0);
+		ML.set(0);
+		MR.set(0);
     }
     
     public void rangeFinder() {
-    	double range = (dist.getRangeInches())/12; // reads the range on the ultrasonic sensor
-    	Timer.delay(.5);
+    	double rangeL = (distL.getRangeInches())/12; // reads the range on the ultrasonic sensor
+    	double rangeR = (distR.getRangeInches())/12;
+    	//Timer.delay(.5);
 		DecimalFormat myFormat = new DecimalFormat("0.0");
-		String rangeFinal = myFormat.format(range);
-    	SmartDashboard.putString("Distance (ft): ", rangeFinal);
-		//System.out.println(rangeFinal);
-    	
+		String rangeFinalL = myFormat.format(rangeL);
+		String rangeFinalR = myFormat.format(rangeR);
+		
+    	SmartDashboard.putNumber("Left Distance (ft): ", rangeL);
+    	SmartDashboard.putNumber("Right Distance (ft): ", rangeR);
+//		System.out.print(String.valueOf(distL.getRangeInches()) + " ");
+//		System.out.println(String.valueOf(distR.getRangeInches()));
+//    	
     }
     
 	public void normalDrive() {
 		
-		if(limitSwitch.get()){
-			//System.out.println("The limit switch is pressed?");
-			done = true;
-				FL.set(0); // multiply value by .5 to make 50% speed
-				BL.set(0);	
-				FR.set(0);
-				BR.set(0);
-				ML.set(0);
-				MR.set(0);
-		}
-		else {
+		//SmartDashboard.getNumber("Percent Speed: ", speedMult);
+		
+		
+		
+//		if(limitSwitch.get()){
+//			//System.out.println("The limit switch is pressed?");
+//			done = true;
+//				FL.set(0); // multiply value by .5 to make 50% speed
+//				BL.set(0);	
+//				FR.set(0);
+//				BR.set(0);
+//				ML.set(0);
+//				MR.set(0);
+//		}
+//		else {
 			//System.out.println("The limit switch was released");
 			double axisXinitial = xbox.getRawAxis(4); //axis 4 is right joystick x axis
 			DecimalFormat myFormat = new DecimalFormat("0.0");
@@ -170,13 +196,13 @@ public class Robot extends IterativeRobot {
 				br = 0;
 			}
 
-			FL.set(-fl * .5); // multiply value by .5 to make 50% speed
-			BL.set(-bl * .5);
-			FR.set(-fr * .5);
-			BR.set(-br * .5);
-			ML.set(-fl * .5);
-			MR.set(-br * .5);
-		}
+			FL.set(-fl); // multiply value by .5 to make 50% speed
+			BL.set(-bl);
+			FR.set(-fr);
+			BR.set(-br);
+			ML.set(-fl);
+			MR.set(-br);
+	//	}
 	}
 
     
