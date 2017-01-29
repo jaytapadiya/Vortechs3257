@@ -55,11 +55,11 @@ public class Robot extends IterativeRobot {
 		done = false;
         xbox = new Joystick(0);
         stick = new Joystick(1);
-        FR = new Talon(0);
-        MR = new Talon(1);
-        BR = new Talon(2);
-        BL = new Talon(3);
-        ML = new Talon(4);
+        FR = new Talon(3);
+        MR = new Talon(2);
+        BR = new Talon(6);
+        BL = new Talon(0);
+        ML = new Talon(1);
         FL = new Talon(5);
         limitSwitch = new DigitalInput(1);
         CameraServer server = CameraServer.getInstance();
@@ -101,26 +101,67 @@ public class Robot extends IterativeRobot {
     	if(stick.getRawButton(2) == true){
     		align();
     	}
+    	if(stick.getRawButton(1) == true) {
+    		approach();
+    	}
+    }
+    
+    public void approach() {
+    	align();
+    	
+    	while ((distL.getRangeInches() > 12.0) && (distR.getRangeInches() > 12.0)) {
+    		FL.set(-.3);
+    		ML.set(-.3);
+    		BL.set(-.3);
+    		FR.set(.3);
+    		MR.set(.3);
+    		BR.set(.3);
+    	}
+    	while ((distL.getRangeInches() > 2.0) && (distL.getRangeInches() < 13) && (distR.getRangeInches() > 2.0) && (distR.getRangeInches() < 13)) {
+    		FL.set(-.25);
+    		ML.set(-.25);
+    		BL.set(-.25);
+    		FR.set(.25);
+    		MR.set(.25);
+    		BR.set(.25);
+    	}
+		FL.set(0);
+		ML.set(0);
+		BL.set(0);
+		FR.set(0);
+		MR.set(0);
+		BR.set(0);
+	
     }
     
     public void align(){
-    	while(distL.getRangeInches() + .5 < distR.getRangeInches()){
-    		FR.set(0.3);
-    		MR.set(0.3);
-    		BR.set(0.3);
-    	}
-    	while(distR.getRangeInches() + .5 < distL.getRangeInches()){
-    		FL.set(-0.3);
-    		ML.set(-0.3);
-    		BL.set(-0.3);
-    	}
+    	while(distL.getRangeInches() + 1 < distR.getRangeInches()){
+    		FR.set(0.4);
+    		MR.set(0.4);
+    		BR.set(0.4);
+    		FL.set(.4);
+    		ML.set(.4);
+    		BL.set(.4);
+    	} 
+    	
+    	while(distR.getRangeInches() + 1 < distL.getRangeInches()){
+    		FL.set(-0.4);
+    		ML.set(-0.4);
+    		BL.set(-0.4);
+    		FR.set(-.4);
+    		MR.set(-.4);
+    		BR.set(-.4);
+    		
+    	} 
 		FL.set(0); 
 		BL.set(0);	
 		FR.set(0);
 		BR.set(0);
 		ML.set(0);
 		MR.set(0);
+    	
     }
+    	
     
     public void rangeFinder() {
     	double rangeL = (distL.getRangeInches())/12; // reads the range on the ultrasonic sensor
@@ -130,8 +171,8 @@ public class Robot extends IterativeRobot {
 		String rangeFinalL = myFormat.format(rangeL);
 		String rangeFinalR = myFormat.format(rangeR);
 		
-    	SmartDashboard.putNumber("Left Distance (ft): ", rangeL);
-    	SmartDashboard.putNumber("Right Distance (ft): ", rangeR);
+    	SmartDashboard.putNumber("Left Distance (ft): ", distL.getRangeInches());
+    	SmartDashboard.putNumber("Right Distance (ft): ", distR.getRangeInches());
 //		System.out.print(String.valueOf(distL.getRangeInches()) + " ");
 //		System.out.println(String.valueOf(distR.getRangeInches()));
 //    	
