@@ -110,56 +110,46 @@ public class Robot extends IterativeRobot {
     	align();
     	
     	while ((distL.getRangeInches() > 12.0) && (distR.getRangeInches() > 12.0)) {
-    		FL.set(-.3);
-    		ML.set(-.3);
-    		BL.set(-.3);
-    		FR.set(.3);
-    		MR.set(.3);
-    		BR.set(.3);
+    		setLeftSpeed(-.3);
+    		setRightSpeed(.3);
     	}
     	while ((distL.getRangeInches() > 2.0) && (distL.getRangeInches() < 13) && (distR.getRangeInches() > 2.0) && (distR.getRangeInches() < 13)) {
-    		FL.set(-.25);
-    		ML.set(-.25);
-    		BL.set(-.25);
-    		FR.set(.25);
-    		MR.set(.25);
-    		BR.set(.25);
+    		setLeftSpeed(-.25);
+    		setRightSpeed(.25);
     	}
-		FL.set(0);
-		ML.set(0);
-		BL.set(0);
-		FR.set(0);
-		MR.set(0);
-		BR.set(0);
+    	stop();
 	
+    }
+    
+    private void stop(){
+    	setLeftSpeed(0);
+    	setRightSpeed(0);
     }
     
     public void align(){
     	while(distL.getRangeInches() + 1 < distR.getRangeInches()){
-    		FR.set(0.4);
-    		MR.set(0.4);
-    		BR.set(0.4);
-    		FL.set(.4);
-    		ML.set(.4);
-    		BL.set(.4);
+    		setLeftSpeed(0.4);
+    		setRightSpeed(0.4);
     	} 
     	
     	while(distR.getRangeInches() + 1 < distL.getRangeInches()){
-    		FL.set(-0.4);
-    		ML.set(-0.4);
-    		BL.set(-0.4);
-    		FR.set(-.4);
-    		MR.set(-.4);
-    		BR.set(-.4);
-    		
+    		setLeftSpeed(-0.4);
+    		setRightSpeed(-0.4);
     	} 
-		FL.set(0); 
-		BL.set(0);	
-		FR.set(0);
-		BR.set(0);
-		ML.set(0);
-		MR.set(0);
+    	stop();
     	
+    }
+    
+    private void setLeftSpeed(double speed){
+		FL.set(speed);
+		ML.set(speed);
+		BL.set(speed);
+    }
+    
+    private void setRightSpeed(double speed){
+		FR.set(speed);
+		MR.set(speed);
+		BR.set(speed);	
     }
     	
     
@@ -237,12 +227,9 @@ public class Robot extends IterativeRobot {
 				br = 0;
 			}
 
-			FL.set(-fl); // multiply value by .5 to make 50% speed
-			BL.set(-bl);
-			FR.set(-fr);
-			BR.set(-br);
-			ML.set(-fl);
-			MR.set(-br);
+			setLeftSpeed(-fl);
+			setRightSpeed(-fr);
+
 	//	}
 	}
 
