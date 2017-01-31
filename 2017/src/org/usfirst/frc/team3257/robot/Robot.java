@@ -95,15 +95,36 @@ public class Robot extends IterativeRobot {
     	distR.setAutomaticMode(true);
     }
     public void teleopPeriodic() {
+    	//System.out.println("test");
     	LiveWindow.run();
     	normalDrive();
     	rangeFinder();
-    	if(stick.getRawButton(2) == true){
+    	if(xbox.getRawButton(2) == true){
+    		System.out.println("joystick button 2"); //2=B
     		align();
     	}
-    	if(stick.getRawButton(1) == true) {
+    	if(xbox.getRawButton(1) == true) {
+    		System.out.println("joystick button 1"); //1=A
     		approach();
     	}
+    	if(xbox.getRawButton(3) == true){
+    		System.out.println("joystick button 3"); //3=X
+    		extendArm();
+    	}
+    	if(xbox.getRawButton(4) == true) {
+    		System.out.println("joystick button 4"); //4=Y
+    		retractArm();
+    	}
+    }
+    
+    private void extendArm()
+    {
+    	System.out.println("Help trapped in robot");
+    }
+    
+    private void retractArm()
+    {
+    	System.out.println("#triggered");
     }
     
     public void approach() {
