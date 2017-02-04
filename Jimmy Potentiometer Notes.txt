@@ -1,0 +1,10 @@
+	double potDegrees;
+        pot = new AnalogPotentiometer(0, 360, 30);
+
+    public void potentiometer(){
+
+        potDegrees = pot.get();
+        DecimalFormat myFormat = new DecimalFormat("0.0");
+    	String degreesFinal = myFormat.format(potDegrees);
+    	SmartDashboard.putString("Potentiometer: ", degreesFinal);
+	}
