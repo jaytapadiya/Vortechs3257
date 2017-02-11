@@ -122,7 +122,7 @@ public class Robot extends IterativeRobot {
 
 	public void teleopPeriodic() {
 		// System.out.println("test");
-		LiveWindow.run();
+		LiveWindow.run();	
 		//normalDrive();
 		drive.main();
 		rangeFinder.main(distL, distR);
