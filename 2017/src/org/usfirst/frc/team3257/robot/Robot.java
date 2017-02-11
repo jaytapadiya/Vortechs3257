@@ -2,6 +2,7 @@
 package org.usfirst.frc.team3257.robot;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.I2C;
@@ -13,6 +14,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import java.nio.ByteBuffer;
@@ -46,6 +48,7 @@ public class Robot extends IterativeRobot {
 	static Jaguar FL;
 	static Jaguar FR;
 	Jaguar winch;
+	Jaguar arm;
 	DigitalInput limitSwitch;
 	AnalogInput pMeter;
 	static Ultrasonic distL;
@@ -53,6 +56,7 @@ public class Robot extends IterativeRobot {
 	boolean done;
 	boolean canMoveForward;
 	double speedMult;
+	Accelerometer accel;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -65,13 +69,14 @@ public class Robot extends IterativeRobot {
 		done = false;
 		xbox = new Joystick(0);
 		stick = new Joystick(1);
-		winch = new Jaguar(3);
+		winch = new Jaguar(5);
 		// FR = new Talon(3);
 		// // = new Talon(2);
 		// BR = new Talon(6);
 		//BL = new Talon(0);
 		// // ML = new Talon(1);
 		//FL = new Talon(5);
+		arm = new Jaguar(0);
 		FL = new Jaguar(3);
 		FR = new Jaguar(2);
 		BL = new Jaguar(4);
@@ -85,6 +90,8 @@ public class Robot extends IterativeRobot {
 		distR = new Ultrasonic(1, 0); // output, input DIO ports
 
 		pMeter = new AnalogInput(0);
+	
+		accel = new BuiltInAccelerometer();
 	}
 
 	/**
@@ -125,14 +132,26 @@ public class Robot extends IterativeRobot {
 		if (xbox.getRawButton(1) == true) { //1=A
 			rangeFinder.approach();
 		}
-		if (xbox.getRawButton(3) == true) { //3=X
-			extendArm();
-		}
-		if (xbox.getRawButton(4) == true) { //4=Y
-			retractArm();
-		}
+//		if (xbox.getRawButton(3) == true) { //3=X
+//			//extendArm();
+//			
+//		}
+//		if (xbox.getRawButton(4) == true) { //4=Y
+//			//retractArm();
+//		}
 		
-		winch.set(stick.getY());
+		SmartDashboard.putNumber("X: ", accel.getX());
+		SmartDashboard.putNumber("Y: ", accel.getY());
+		SmartDashboard.putNumber("Z: ", accel.getZ());
+		
+		SmartDashboard.putNumber("Adjusted Y", .7071*accel.getY());
+		SmartDashboard.putNumber("Adjusted Z: ", -.7071*accel.getZ());
+		SmartDashboard.putNumber("X TOTAL G: ", .7071*accel.getY() + -.7071*accel.getZ());
+		
+		
+		arm.set(stick.getY());
+		
+		//winch.set(stick.getY());
 		
 		
 		
