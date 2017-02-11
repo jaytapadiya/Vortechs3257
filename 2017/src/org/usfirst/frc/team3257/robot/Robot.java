@@ -57,6 +57,9 @@ public class Robot extends IterativeRobot {
 	boolean canMoveForward;
 	double speedMult;
 	Accelerometer accel;
+	double currentSpeed;
+	double desiredSpeed;
+	double maxStep;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -92,6 +95,10 @@ public class Robot extends IterativeRobot {
 		pMeter = new AnalogInput(0);
 	
 		accel = new BuiltInAccelerometer();
+		
+		currentSpeed = 0.0;
+		desiredSpeed = 0.0;
+		maxStep = 0.05;
 	}
 
 	/**
