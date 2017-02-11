@@ -2,6 +2,7 @@
 package org.usfirst.frc.team3257.robot;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -15,6 +16,7 @@ import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
+import edu.wpi.first.wpilibj.interfaces.Potentiometer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import java.nio.ByteBuffer;
@@ -50,13 +52,15 @@ public class Robot extends IterativeRobot {
 	Jaguar winch;
 	Jaguar arm;
 	DigitalInput limitSwitch;
-	AnalogInput pMeter;
+	// AnalogInput pMeter;
+	AnalogPotentiometer pot;
+	double potDegrees;
 	static Ultrasonic distL;
 	static Ultrasonic distR;
 	boolean done;
 	boolean canMoveForward;
 	double speedMult;
-	Accelerometer accel;
+	static Accelerometer accel;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -89,7 +93,9 @@ public class Robot extends IterativeRobot {
 		distL = new Ultrasonic(3, 2);
 		distR = new Ultrasonic(1, 0); // output, input DIO ports
 
-		pMeter = new AnalogInput(0);
+		//pMeter = new AnalogInput(0);
+		
+		pot = new AnalogPotentiometer(3);
 	
 		accel = new BuiltInAccelerometer();
 	}
@@ -132,21 +138,18 @@ public class Robot extends IterativeRobot {
 		if (xbox.getRawButton(1) == true) { //1=A
 			rangeFinder.approach();
 		}
-//		if (xbox.getRawButton(3) == true) { //3=X
-//			//extendArm();
-//			
-//		}
-//		if (xbox.getRawButton(4) == true) { //4=Y
-//			//retractArm();
-//		}
 		
 		SmartDashboard.putNumber("X: ", accel.getX());
 		SmartDashboard.putNumber("Y: ", accel.getY());
 		SmartDashboard.putNumber("Z: ", accel.getZ());
+		// SmartDashboard.putNumber("arm: ", pMeter.getVoltage());
 		
-		SmartDashboard.putNumber("Adjusted Y", .7071*accel.getY());
-		SmartDashboard.putNumber("Adjusted Z: ", -.7071*accel.getZ());
-		SmartDashboard.putNumber("X TOTAL G: ", .7071*accel.getY() + -.7071*accel.getZ());
+		potDegrees = pot.get();
+		SmartDashboard.putNumber("Potentiometer: ", potDegrees*100);
+		
+//		SmartDashboard.putNumber("Adjusted Y", .7071*accel.getY());
+//		SmartDashboard.putNumber("Adjusted Z: ", -.7071*accel.getZ());
+		SmartDashboard.putNumber("X TOTAL G: ", .68199*accel.getY() + -.68199*accel.getZ());
 		
 		
 		arm.set(stick.getY());

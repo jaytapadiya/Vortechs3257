@@ -17,8 +17,9 @@ public class drive extends Robot {
 		double bl;
 		double fr;
 		double br;
+		double actualY;
 		
-		double actualY = Math.pow(leftStickY, 7); // cubic function; makes
+		double notActualY = Math.pow(leftStickY, 7); // cubic function; makes
 		// sensitivity at lower
 		// magnitude less
 		// significant and
@@ -31,7 +32,13 @@ public class drive extends Robot {
 		// maximum of half the
 		// speed of the outer
 		// wheels
+		double accelX = .68199*accel.getY() + -.68199*accel.getZ();
 		
+		if (Math.abs(accelX) < 1) {
+			 actualY = (leftStickY * Math.abs(1 - accelX));
+		} else {
+		 actualY = 0;
+		}
 		
 		
 		if ((Math.abs(axisX) < .2) && (Math.abs(actualY) > .2)) { // 0.2 is used
@@ -77,8 +84,8 @@ public class drive extends Robot {
 		//
 		System.out.print("left speed: " + fl * .5 + " ");
 		System.out.println("right speed: " + br * .5);
-		setLeftSpeed(-fl * 0.4);
-		setRightSpeed(-fr * 0.4);
+		setLeftSpeed(-fl);
+		setRightSpeed(-fr);
 
 	}
 
