@@ -3,8 +3,10 @@ package org.usfirst.frc.team3257.robot;
 import java.text.DecimalFormat;
 
 public class drive extends Robot {
-		
-		
+	static double currentSpeed = 0.0;
+	static double desiredSpeed = 0.0;
+	static double maxStep = 0.03;		
+	
 	public static void main() {
 		// TODO Auto-generated method stub
 		double axisXinitial = xbox.getRawAxis(4); // axis 4 is right joystick x
@@ -19,11 +21,47 @@ public class drive extends Robot {
 		double br;
 		double actualY;
 		
+<<<<<<< HEAD
 		double notActualY = Math.pow(leftStickY, 7); // cubic function; makes
+=======
+
+		
+		double actualY = Math.pow(leftStickY, 7); // cubic function; makes
+>>>>>>> 1d54fe3a4b582fabe1022625fb1074f4cb6d53ad
 		// sensitivity at lower
 		// magnitude less
 		// significant and
-		// exponentially increases
+		// exponentially increases	
+		desiredSpeed = actualY;
+		if(currentSpeed == desiredSpeed)
+		{
+			//do nothing
+		}
+		else if(currentSpeed > desiredSpeed)
+		{
+			//slow down
+			if(currentSpeed - desiredSpeed < maxStep)
+			{
+				currentSpeed = desiredSpeed;
+			}
+			else
+			{
+				currentSpeed = currentSpeed - maxStep;
+			}
+		}
+		else
+		{
+		// speed up	
+			if(desiredSpeed - currentSpeed < maxStep)
+			{
+				currentSpeed = desiredSpeed;
+			}
+			else
+			{
+				currentSpeed = currentSpeed + maxStep;
+			}
+		}
+		actualY = currentSpeed;
 		double actualX = 1 - (Math.abs(axisX)) * .5; // this value will be set
 		// to the side of motors
 		// to which the robot is
@@ -84,7 +122,11 @@ public class drive extends Robot {
 		//
 		System.out.print("left speed: " + fl * .5 + " ");
 		System.out.println("right speed: " + br * .5);
+<<<<<<< HEAD
 		setLeftSpeed(-fl);
+=======
+		setLeftSpeed(-fl * 0.7);
+>>>>>>> 1d54fe3a4b582fabe1022625fb1074f4cb6d53ad
 		setRightSpeed(-fr);
 
 	}

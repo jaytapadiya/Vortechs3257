@@ -60,7 +60,14 @@ public class Robot extends IterativeRobot {
 	boolean done;
 	boolean canMoveForward;
 	double speedMult;
+<<<<<<< HEAD
 	static Accelerometer accel;
+=======
+	Accelerometer accel;
+	double currentSpeed;
+	double desiredSpeed;
+	double maxStep;
+>>>>>>> 1d54fe3a4b582fabe1022625fb1074f4cb6d53ad
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -98,6 +105,10 @@ public class Robot extends IterativeRobot {
 		pot = new AnalogPotentiometer(3);
 	
 		accel = new BuiltInAccelerometer();
+		
+		currentSpeed = 0.0;
+		desiredSpeed = 0.0;
+		maxStep = 0.05;
 	}
 
 	/**
