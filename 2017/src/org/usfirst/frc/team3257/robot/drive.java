@@ -5,7 +5,8 @@ import java.text.DecimalFormat;
 public class drive extends Robot {
 	static double currentSpeed = 0.0;
 	static double desiredSpeed = 0.0;
-	static double maxStep = 0.03;		
+	static double maxStep = 0.018;	
+	static double maxSlowStep = .018;
 	
 	public static void main() {
 		// TODO Auto-generated method stub
@@ -19,15 +20,9 @@ public class drive extends Robot {
 		double bl;
 		double fr;
 		double br;
-		double actualY;
-		
-<<<<<<< HEAD
-		double notActualY = Math.pow(leftStickY, 7); // cubic function; makes
-=======
-
-		
+		//double actualY;
 		double actualY = Math.pow(leftStickY, 7); // cubic function; makes
->>>>>>> 1d54fe3a4b582fabe1022625fb1074f4cb6d53ad
+
 		// sensitivity at lower
 		// magnitude less
 		// significant and
@@ -40,13 +35,13 @@ public class drive extends Robot {
 		else if(currentSpeed > desiredSpeed)
 		{
 			//slow down
-			if(currentSpeed - desiredSpeed < maxStep)
+			if(currentSpeed - desiredSpeed < maxSlowStep)
 			{
 				currentSpeed = desiredSpeed;
 			}
 			else
 			{
-				currentSpeed = currentSpeed - maxStep;
+				currentSpeed = currentSpeed - maxSlowStep;
 			}
 		}
 		else
@@ -70,13 +65,6 @@ public class drive extends Robot {
 		// maximum of half the
 		// speed of the outer
 		// wheels
-		double accelX = .68199*accel.getY() + -.68199*accel.getZ();
-		
-		if (Math.abs(accelX) < 1) {
-			 actualY = (leftStickY * Math.abs(1 - accelX));
-		} else {
-		 actualY = 0;
-		}
 		
 		
 		if ((Math.abs(axisX) < .2) && (Math.abs(actualY) > .2)) { // 0.2 is used
@@ -106,10 +94,10 @@ public class drive extends Robot {
 			fr = -actualY;
 			br = -actualY;
 		} else if ((Math.abs(actualY) < 0.2) && (Math.abs(axisX) > 0.2)) {
-			fl = -(axisX);
-			bl = -(axisX);
-			fr = -(axisX);
-			br = -(axisX);
+			fl = -(axisX*.5);
+			bl = -(axisX*.5);
+			fr = -(axisX*.5);
+			br = -(axisX*.5);
 		} else {
 			fl = 0;
 			fr = 0;
@@ -122,11 +110,7 @@ public class drive extends Robot {
 		//
 		System.out.print("left speed: " + fl * .5 + " ");
 		System.out.println("right speed: " + br * .5);
-<<<<<<< HEAD
-		setLeftSpeed(-fl);
-=======
-		setLeftSpeed(-fl * 0.7);
->>>>>>> 1d54fe3a4b582fabe1022625fb1074f4cb6d53ad
+		setLeftSpeed(-fl * 0.9);
 		setRightSpeed(-fr);
 
 	}

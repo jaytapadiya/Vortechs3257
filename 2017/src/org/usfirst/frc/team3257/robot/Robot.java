@@ -60,14 +60,10 @@ public class Robot extends IterativeRobot {
 	boolean done;
 	boolean canMoveForward;
 	double speedMult;
-<<<<<<< HEAD
-	static Accelerometer accel;
-=======
 	Accelerometer accel;
 	double currentSpeed;
 	double desiredSpeed;
 	double maxStep;
->>>>>>> 1d54fe3a4b582fabe1022625fb1074f4cb6d53ad
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -155,15 +151,23 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Z: ", accel.getZ());
 		// SmartDashboard.putNumber("arm: ", pMeter.getVoltage());
 		
-		potDegrees = pot.get();
-		SmartDashboard.putNumber("Potentiometer: ", potDegrees*100);
+		potDegrees = pot.get()*100;
+		SmartDashboard.putNumber("Potentiometer: ", potDegrees);
 		
 //		SmartDashboard.putNumber("Adjusted Y", .7071*accel.getY());
 //		SmartDashboard.putNumber("Adjusted Z: ", -.7071*accel.getZ());
 		SmartDashboard.putNumber("X TOTAL G: ", .68199*accel.getY() + -.68199*accel.getZ());
 		
+		if ((potDegrees < 20) && stick.getY() > 0) {
+
+			arm.set(stick.getY()*.5);		
 		
-		arm.set(stick.getY());
+		} else if ((potDegrees > 55) && stick.getY() < 0) {
+			arm.set(stick.getY() * .5);
+		} else if ((potDegrees > 20) && (potDegrees < 55)) {
+			arm.set(stick.getY()*.5);
+			
+		}else {arm.set(0);}
 		
 		//winch.set(stick.getY());
 		

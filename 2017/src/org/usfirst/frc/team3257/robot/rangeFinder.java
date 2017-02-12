@@ -26,14 +26,14 @@ public class rangeFinder extends Robot {
 	public static void approach() {
 		align();
 
-		while ((distL.getRangeInches() > 42.0) && (distR.getRangeInches() > 42)) {
-			setLeftSpeed(-.3);
-			setRightSpeed(.3);
+		while ((distL.getRangeInches() > 34.0) && (distR.getRangeInches() > 34)) {
+			setLeftSpeed(.3);
+			setRightSpeed(-.3);
 		}
-		while ((distL.getRangeInches() > 36.0) && (distL.getRangeInches() < 43) && (distR.getRangeInches() > 36)
-	&& (distR.getRangeInches() < 43)) {
-			setLeftSpeed(-.25);
-			setRightSpeed(.25);
+		while ((distL.getRangeInches() > 24.0) && (distL.getRangeInches() < 35) && (distR.getRangeInches() > 24)
+	&& (distR.getRangeInches() < 35)) {
+			setLeftSpeed(.25);
+			setRightSpeed(-.25);
 		}
 		stop();
 
@@ -46,13 +46,13 @@ public class rangeFinder extends Robot {
 
 	public static void align() {
 		while (distL.getRangeInches() + 1 < distR.getRangeInches()) {
-			setLeftSpeed(0.4);
-			setRightSpeed(0.4);
+			setLeftSpeed(-0.2);
+			setRightSpeed(-0.2);
 		}
 
 		while (distR.getRangeInches() + 1 < distL.getRangeInches()) {
-			setLeftSpeed(-0.4);
-			setRightSpeed(-0.4);
+			setLeftSpeed(0.2);
+			setRightSpeed(0.2);
 		}
 		stop();
 
