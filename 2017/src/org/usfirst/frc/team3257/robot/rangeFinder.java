@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class rangeFinder extends Robot {
 
-	public static void main(Ultrasonic distL, Ultrasonic distR) {
+	public static void main() {
 		// TODO Auto-generated method stub
 		double rangeL = (distL.getRangeInches()) / 12; // reads the range on the
 		// ultrasonic sensor
@@ -18,8 +18,10 @@ public class rangeFinder extends Robot {
 		String rangeFinalL = myFormat.format(rangeL);
 		String rangeFinalR = myFormat.format(rangeR);
 
-		SmartDashboard.putNumber("Left Distance (ft): ", distL.getRangeInches() / 12);
-		SmartDashboard.putNumber("Right Distance (ft): ", distR.getRangeInches() / 12);
+		SmartDashboard.putNumber("Front Left Distance (ft): ", distL.getRangeInches() / 12);
+		SmartDashboard.putNumber("front Right Distance (ft): ", distR.getRangeInches() / 12);
+		SmartDashboard.putNumber("Back Left Distance (ft): ", backDistL.getRangeInches() / 12);
+		SmartDashboard.putNumber("Back Right Distance (ft): ", backDistR.getRangeInches() / 12);
 
 	}
 	

@@ -55,8 +55,8 @@ public class Robot extends IterativeRobot {
 	// AnalogInput pMeter;
 	AnalogPotentiometer pot;
 	double potDegrees;
-	static Ultrasonic distL;
-	static Ultrasonic distR;
+	static Ultrasonic distL, backDistL;
+	static Ultrasonic distR, backDistR;
 	boolean done;
 	boolean canMoveForward;
 	double speedMult;
@@ -95,7 +95,8 @@ public class Robot extends IterativeRobot {
 		speedMult = .5;
 		distL = new Ultrasonic(3, 2);
 		distR = new Ultrasonic(1, 0); // output, input DIO ports
-
+		backDistR = new Ultrasonic(7, 6);
+		backDistL = new Ultrasonic(5, 4);
 		//pMeter = new AnalogInput(0);
 		
 		pot = new AnalogPotentiometer(3);
@@ -120,17 +121,24 @@ public class Robot extends IterativeRobot {
 	}
 
 	public void autonomousInit() {
+		distL.setAutomaticMode(true); // turns on automatic mode
+		distR.setAutomaticMode(true);
+		backDistL.setAutomaticMode(true);
+		backDistR.setAutomaticMode(true);
 	}
 
 	/**
 	 * This function is called periodically during autonomous
 	 */
 	public void autonomousPeriodic() {
+		autonomous.main(backDistL, backDistR);
 	}
 
 	public void teleopInit() {
 		distL.setAutomaticMode(true); // turns on automatic mode
 		distR.setAutomaticMode(true);
+		backDistL.setAutomaticMode(true);
+		backDistR.setAutomaticMode(true);
 	}
 
 	public void teleopPeriodic() {
@@ -138,7 +146,7 @@ public class Robot extends IterativeRobot {
 		LiveWindow.run();	
 		//normalDrive();
 		drive.main();
-		rangeFinder.main(distL, distR);
+		rangeFinder.main();
 		if (xbox.getRawButton(2) == true) { // 2=B 
 			rangeFinder.align();
 		}
@@ -153,6 +161,7 @@ public class Robot extends IterativeRobot {
 		
 		potDegrees = pot.get()*100;
 		SmartDashboard.putNumber("Potentiometer: ", potDegrees);
+		
 		
 //		SmartDashboard.putNumber("Adjusted Y", .7071*accel.getY());
 //		SmartDashboard.putNumber("Adjusted Z: ", -.7071*accel.getZ());
